@@ -10,20 +10,10 @@ webpage = urlopen(rss_link).read()
 mysoup = BeautifulSoup(webpage)
 
 titlesoup = mysoup.findAll('title')
+print titlesoup
 
-bla = "<title> 1 <title> 23 <title>"
-print bla.replace("<title>","")
-print bla
+list=[]
+list[:]=range(2,10)
 
-for i in range(2,10):
-    bla2 = string(titlesoup[i])
-    print bla2.replace("<title>","")
-
-
-def mafonction(a,b):
-    return a+b
-
-#blabla
-
-
-print mafonction(10,20)
+for i in list:
+    print titlesoup[i]
