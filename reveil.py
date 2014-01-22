@@ -2,10 +2,15 @@
 from urllib import urlopen
 from bs4 import BeautifulSoup
 
+# voice requires pyttsx which requires [setuptools] to install
+import pyttsx
+# voice on windows requires [pywin32] to access OS default TextToSpeech
+
 # works
 #rss_link = "http://rss.lemonde.fr/c/205/f/3050/index.rss"
-rss_link = "http://rss.lapresse.ca/225.xml"
+#rss_link = "http://rss.lapresse.ca/225.xml"
 
+rss_link = "http://rss.canada.com/get/?F299"
 #doesnt work
 #rss_link = "http://feeds.gawker.com/lifehacker/full"
 
@@ -25,26 +30,41 @@ descrsoup = mysoup.findAll('description')
 #print titlesoup
 
 list=[]
-list[:]=range(2,10) #27)
+list[:]=range(1,5) #27)
+
+#setup voice
+
+engine = pyttsx.init()
+#check current voice setup
+voices = engine.getProperty('voices')
+for voice in voices:
+    print voice 
+    
+
 
 for i in list:
     #force to unicode string ( instead of str() )
-    toto = unicode(titlesoup[i]) 
-    tata = unicode(descrsoup[i-1])
+    title = unicode(titlesoup[i]) 
+    descr = unicode(descrsoup[i])
     
     
     #remove html tags
-    toto = toto.replace("<title>", "")
-    toto = toto.replace("</title>", "")
+    title = title.replace("<title>", "")
+    title = title.replace("</title>", "")
     
-    tata = tata.replace("<description>", "")
+    descr = descr.replace("<description>", "")
+    descr = descr.replace("</description>", "")
     #get rid of the html after the description
-    tata = tata.split ('&lt')[0]
+    descr = descr.split ('&lt')[0]
     
-    print toto
-    print tata
+    print title
+    engine.say(title)
+    print descr
+    engine.say(descr)
     print ""
-    
-   
-    
+
+
+engine.runAndWait()
+
+
     
