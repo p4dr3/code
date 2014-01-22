@@ -46,8 +46,7 @@ for i in list:
     #force to unicode string ( instead of str() )
     title = unicode(titlesoup[i]) 
     descr = unicode(descrsoup[i])
-    
-    
+     
     #remove html tags
     title = title.replace("<title>", "")
     title = title.replace("</title>", "")
@@ -62,7 +61,6 @@ for i in list:
     print descr
     engine.say(descr)
     print ""
-
 
 engine.runAndWait()
 
