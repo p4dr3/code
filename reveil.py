@@ -19,10 +19,10 @@ def decode_unicode_references(data):
     return re.sub("&amp;#(\d+)(;|(?=\s))", _callback, data)
 # works
 # FRANCAIS
-rss_link = "http://rss.lemonde.fr/c/205/f/3050/index.rss"
+#rss_link = "http://rss.lemonde.fr/c/205/f/3050/index.rss"
 #rss_link = "http://rss.lapresse.ca/225.xml"
 # ENGLISH
-#rss_link = "http://rss.canada.com/get/?F299"
+rss_link = "http://rss.canada.com/get/?F299"
 
 #doesnt work (<p [..]> tags)
 #rss_link = "http://feeds.gawker.com/lifehacker/full"
@@ -42,7 +42,6 @@ list=[]
 list[:]=range(1,5) #27)
 
 #setup voice
-
 engine = pyttsx.init()
 #check current voice setup
 voices = engine.getProperty('voices')
@@ -73,12 +72,12 @@ for i in list:
     title = decode_unicode_references(title)
     descr = decode_unicode_references(descr)
 
-    print title
-    engine.say(title)
+    print title+"."
+    #engine.say(title)
     print descr
-    engine.say(descr)
+    #engine.say(descr)
     print ""
-
+    
 engine.runAndWait()
     
 
