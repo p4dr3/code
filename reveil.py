@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 # voice requires pyttsx which requires [setuptools] to install
 import pyttsx
 # voice on windows requires [pywin32] to access OS default TextToSpeech
-
+ 
 import re
 def _callback(matches):
     id = matches.group(1)
@@ -15,14 +15,16 @@ def _callback(matches):
         return id
 
 def decode_unicode_references(data):
-    return re.sub("&#(\d+)(;|(?=\s))", _callback, data)
-
+    #return re.sub("&#(\d+)(;|(?=\s))", _callback, data)
+    return re.sub("&amp;#(\d+)(;|(?=\s))", _callback, data)
 # works
-#rss_link = "http://rss.lemonde.fr/c/205/f/3050/index.rss"
+# FRANCAIS
+rss_link = "http://rss.lemonde.fr/c/205/f/3050/index.rss"
 #rss_link = "http://rss.lapresse.ca/225.xml"
+# ENGLISH
+#rss_link = "http://rss.canada.com/get/?F299"
 
-rss_link = "http://rss.canada.com/get/?F299"
-#doesnt work
+#doesnt work (<p [..]> tags)
 #rss_link = "http://feeds.gawker.com/lifehacker/full"
 
 
@@ -45,19 +47,32 @@ engine = pyttsx.init()
 #check current voice setup
 voices = engine.getProperty('voices')
 for voice in voices:
-    print voice 
+    print voice
     
 for i in list:
     
-    #remove html tags
-    title = titlesoup[i].get_text() 
-    descr = descrsoup[i].get_text()
-    #convert to unicode
-    title = unicode (title)
-    title = decode_unicode_references(title)
-    descr = unicode (descr)
-    descr = decode_unicode_references(descr)
+    title = titlesoup[i]
+    descr = descrsoup[i]
     
+    #convert to unicode
+    title = unicode(title)
+    descr = unicode(descr)
+
+    #remove html tags
+    title = title.replace("<title>", "")
+    title = title.replace("</title>", "")
+    descr = descr.replace("<description>", "")
+    descr = descr.replace("</description>", "")
+    
+    #get rid of the html after the description
+    descr = descr.split ('&lt')[0]
+    
+    
+    title= str(title)
+    descr = str(descr)
+    title = decode_unicode_references(title)
+    descr = decode_unicode_references(descr)
+
     print title
     engine.say(title)
     print descr
@@ -65,7 +80,7 @@ for i in list:
     print ""
 
 engine.runAndWait()
-
-
-#bla
     
+
+#debug stuff:
+    #print type(descr)
