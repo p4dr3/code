@@ -6,6 +6,17 @@ from bs4 import BeautifulSoup
 import pyttsx
 # voice on windows requires [pywin32] to access OS default TextToSpeech
 
+import re
+def _callback(matches):
+    id = matches.group(1)
+    try:
+        return unichr(int(id))
+    except:
+        return id
+
+def decode_unicode_references(data):
+    return re.sub("&#(\d+)(;|(?=\s))", _callback, data)
+
 # works
 #rss_link = "http://rss.lemonde.fr/c/205/f/3050/index.rss"
 #rss_link = "http://rss.lapresse.ca/225.xml"
@@ -13,7 +24,6 @@ import pyttsx
 rss_link = "http://rss.canada.com/get/?F299"
 #doesnt work
 #rss_link = "http://feeds.gawker.com/lifehacker/full"
-
 
 
 #read webpage and stores it
@@ -26,9 +36,6 @@ mysoup = BeautifulSoup(webpage)
 titlesoup = mysoup.findAll('title')
 descrsoup = mysoup.findAll('description')
 
-#debug
-#print titlesoup
-
 list=[]
 list[:]=range(1,5) #27)
 
@@ -40,21 +47,16 @@ voices = engine.getProperty('voices')
 for voice in voices:
     print voice 
     
-
-
 for i in list:
-    #force to unicode string ( instead of str() )
-    title = unicode(titlesoup[i]) 
-    descr = unicode(descrsoup[i])
-     
-    #remove html tags
-    title = title.replace("<title>", "")
-    title = title.replace("</title>", "")
     
-    descr = descr.replace("<description>", "")
-    descr = descr.replace("</description>", "")
-    #get rid of the html after the description
-    descr = descr.split ('&lt')[0]
+    #remove html tags
+    title = titlesoup[i].get_text() 
+    descr = descrsoup[i].get_text()
+    #convert to unicode
+    title = unicode (title)
+    title = decode_unicode_references(title)
+    descr = unicode (descr)
+    descr = decode_unicode_references(descr)
     
     print title
     engine.say(title)
@@ -63,6 +65,7 @@ for i in list:
     print ""
 
 engine.runAndWait()
+
 
 #bla
     
