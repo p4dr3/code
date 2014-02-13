@@ -1,12 +1,11 @@
 #! /usr/bin/python
+from salli import text_to_voice
+
 from urllib import urlopen
 from bs4 import BeautifulSoup
-
-# voice requires pyttsx which requires [setuptools] to install
-import pyttsx
-# voice on windows requires [pywin32] to access OS default TextToSpeech
- 
 import re
+import os
+ 
 def _callback(matches):
     id = matches.group(1)
     try:
@@ -14,9 +13,26 @@ def _callback(matches):
     except:
         return id
 
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# ADD SUPPORT FOR NON-ASCII characters
+
 def decode_unicode_references(data):
     #return re.sub("&#(\d+)(;|(?=\s))", _callback, data)
     return re.sub("&amp;#(\d+)(;|(?=\s))", _callback, data)
+
+
+def say_that(text):
+    voice = text_to_voice(text, "salli");
+   
+    # save voice to a file
+    f = open('sound', 'wb') # important to use b we want to write as binary
+    #print f
+    f.write(voice) 
+    
+    # plays the file with media player classic 
+    os.system ("\"C:\Program Files (x86)\MPC-HC\mpc-hc.exe\" sound")
+    
+
 # works
 # FRANCAIS
 #rss_link = "http://rss.lemonde.fr/c/205/f/3050/index.rss"
@@ -39,15 +55,9 @@ titlesoup = mysoup.findAll('title')
 descrsoup = mysoup.findAll('description')
 
 list=[]
-list[:]=range(1,5) #27)
+list[:]=range(1,4) #27)
 
-#setup voice
-engine = pyttsx.init()
-#check current voice setup
-voices = engine.getProperty('voices')
-for voice in voices:
-    print voice
-    
+news = ""
 for i in list:
     
     title = titlesoup[i]
@@ -69,17 +79,19 @@ for i in list:
     
     title= str(title)
     descr = str(descr)
+    descr = descr.replace("","")
     title = decode_unicode_references(title)
     descr = decode_unicode_references(descr)
-
+    
+    news = news+title+".\n"
     print title+"."
-    #engine.say(title)
     print descr
-    #engine.say(descr)
-    print ""
-    
-engine.runAndWait()
-    
+    #say_that(title)
+    #print ""
+       
+print news
+say_that(news)
+
 
 #debug stuff:
     #print type(descr)
