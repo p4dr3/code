@@ -24,7 +24,7 @@ def decode_unicode_references(data):
 def say_that(text):
     #en_us_salli | fr_mathieu | fr_celine| fr_ca_chantal
     #ru_tatyana
-    voice = text_to_voice(text, "fr_celine");
+    voice = text_to_voice(text, "fr_mathieu");
 
     # save voice to a file
     f = open('sound', 'wb') # important to use b we want to write as binary
@@ -40,10 +40,10 @@ def say_that(text):
 
 # works
 # FRANCAIS
-#rss_link = "http://rss.lemonde.fr/c/205/f/3050/index.rss"
+rss_link = "http://rss.lemonde.fr/c/205/f/3050/index.rss"
 #rss_link = "http://rss.lapresse.ca/225.xml"
 # ENGLISH
-rss_link = "http://rss.canada.com/get/?F299"
+#rss_link = "http://rss.canada.com/get/?F299"
 
 #doesnt work (<p [..]> tags)
 #rss_link = "http://feeds.gawker.com/lifehacker/full"
@@ -60,7 +60,7 @@ titlesoup = mysoup.findAll('title')
 descrsoup = mysoup.findAll('description')
 
 list=[]
-list[:]=range(2,4) #27)
+list[:]=range(1,4) #27)
 
 news = ""
 for i in list:
@@ -85,6 +85,7 @@ for i in list:
     title= str(title)
     descr = str(descr)
     descr = descr.replace("","")
+
     title = decode_unicode_references(title)
     descr = decode_unicode_references(descr)
 

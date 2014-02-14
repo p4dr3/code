@@ -23,6 +23,7 @@ def get_session_id(website):
 def text_to_voice(text, voice):
 
     # Prep the text
+    text=text.encode('utf-8')
     text= encode_it(text)
 
     # Prep the voice id  --- CAN ADD MORE
