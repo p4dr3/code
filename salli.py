@@ -2,14 +2,16 @@
 import base64
 import requests
 import StringIO
+from time import sleep
+from subprocess import Popen
 
-#http://base64encode.net/ and replace "=" by "."
+# http://base64encode.net/ and replace "=" by "."
 def encode_it(data):
     data=base64.b64encode(data)
     data=data.replace("=",".")
     return data
 
-# Parse webpage to extract session_id
+# Parses a webpage to extract the session_id
 def get_session_id(website):
     buf = StringIO.StringIO(website)
     for line in buf:
@@ -20,10 +22,13 @@ def get_session_id(website):
             #print "Session _id: "+session_id
             return session_id
 
+# Converts a string to a binary stream of mpeg voice
 def text_to_voice(text, voice):
 
     # Prep the text
     text=text.encode('utf-8')
+    print text
+    print ""
     text= encode_it(text)
 
     # Prep the voice id  --- CAN ADD MORE
@@ -68,3 +73,43 @@ def text_to_voice(text, voice):
 
     return my_voice
 
+# Converts a text to played sound
+def say_that(text,speaker):
+    
+    # DEAL WITH TEXT LENGHT HERE
+    #if len(text) > 250
+    #    lst = str.split(text,'.')
+        
+    
+    # Speaker
+    #en_us_salli | fr_mathieu | fr_celine| fr_ca_chantal
+    #ru_tatyana
+    voice = text_to_voice(text, speaker);
+    
+
+    # save voice to a file
+    f = open('sound', 'wb') # important to use b we want to write as binary
+    #print f
+    f.write(voice)
+    f.close
+
+    # plays the file with media player classic
+    Popen("C:\mplayerc.exe sound",shell=False,stdin=None, stdout=None, stderr=None, close_fds=True)
+   
+    # wait a bit to let audio play entirely, speed depends on speaker
+    if speaker == "en_us_salli":
+        wait_time = ((len(text))/15) 
+    if speaker == "fr_celine":
+        wait_time = ((len(text))/20)    
+    if speaker == "fr_mathieu":
+        wait_time = ((len(text))/18)  
+    else:
+        wait_time = ((len(text))/15)  
+    
+    # for really short sentences
+    if wait_time <2:
+        wait_time=2
+   
+    print "WAIT: "+str(wait_time)
+    sleep(wait_time)
+    
