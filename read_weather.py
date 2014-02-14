@@ -13,9 +13,23 @@ def read_weather():
     #news=[]
 
     #parsing
-    titlesoup = mysoup.findAll('div class=\"forecast\"')
-    print "ypoyp"
-    print titlesoup
+    h2soup = mysoup.findAll('h2')
+    tdsoup = mysoup.findAll('td')
+    #print webpage
+    #print titlesoup
     #news.append
     
+    list=[]
+    list[:]=range(0,100) #27)
+
+    #news=[]
+    print "H2: ",h2soup[1]
+    print "H2: ",h2soup[2]
+
+    for i in list:
+        td = tdsoup[i]
+        print "TD: ",td
+
+
+#read_weather()
 #return news

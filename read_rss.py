@@ -27,7 +27,7 @@ def read_rss(rss_link):
     descrsoup = mysoup.findAll('description')
 
     list=[]
-    list[:]=range(2,3) #27)
+    list[:]=range(2,4) #27)
 
     news=[]
     for i in list:

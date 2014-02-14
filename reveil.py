@@ -15,14 +15,14 @@ rss_link2 = "http://rss.canada.com/get/?F299"
 #rss_link = "http://feeds.gawker.com/lifehacker/full"
 
 
-read_weather()
+#read_weather()
 
-#say_that("Les nouvelles de la presse.", "fr_celine")
-#news=read_rss(rss_link1)
-#for item in news:
-#    say_that(item,"fr_celine")
+say_that("Les nouvelles de la presse.", "fr_celine")
+news=read_rss(rss_link1)
+for item in news:
+    say_that(item,"fr_celine")
 
-#say_that("And now the news from the Gazette.", "en_us_salli")
-#news=read_rss(rss_link2)
-#for item in news:
-#    say_that(item,"en_us_salli")
+say_that("And now the news from the Gazette.", "en_us_salli")
+news=read_rss(rss_link2)
+for item in news:
+    say_that(item,"en_us_salli")
