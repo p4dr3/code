@@ -13,26 +13,22 @@ def encode_it(data):
 def get_session_id(website):
     buf = StringIO.StringIO(website)
     for line in buf:
-        if line.find("voicetest.php?rtr")!= -1: 
+        if line.find("voicetest.php?rtr")!= -1:
             line = line.split("&",10)
             line = line[4].split("\"",2)
             session_id = line[0]
             #print "Session _id: "+session_id
             return session_id
-    
+
 def text_to_voice(text, voice):
-    
+
     # Prep the text
     text= encode_it(text)
 
     # Prep the voice id  --- CAN ADD MORE
-    if voice == "salli" :
-        voice_id = "en_us_salli" #Salli
-        voice_id = encode_it(voice_id)
-    else :
-        voice_id = "en_us_salli" #Salli
-        voice_id = encode_it(voice_id)
-    
+    voice_id = encode_it(voice)
+
+
     # Site specific stuff
     website = "http://www.ivona.com"
     script = "voicetest.php"
@@ -40,7 +36,7 @@ def text_to_voice(text, voice):
     my_header = {"User-Agent":
        "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:26.0) Gecko/20100101 Firefox/26.0"}
 
-    # HTTP REQUESTS 
+    # HTTP REQUESTS
     # Setup a session to keep cookies
     session = requests.Session()
     #print "SESSION"

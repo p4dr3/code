@@ -5,7 +5,7 @@ from urllib import urlopen
 from bs4 import BeautifulSoup
 import re
 import os
- 
+
 def _callback(matches):
     id = matches.group(1)
     try:
@@ -22,16 +22,21 @@ def decode_unicode_references(data):
 
 
 def say_that(text):
-    voice = text_to_voice(text, "salli");
-   
+    #en_us_salli | fr_mathieu | fr_celine| fr_ca_chantal
+    #ru_tatyana
+    voice = text_to_voice(text, "fr_celine");
+
     # save voice to a file
     f = open('sound', 'wb') # important to use b we want to write as binary
     #print f
-    f.write(voice) 
-    
-    # plays the file with media player classic 
-    os.system ("\"C:\Program Files (x86)\MPC-HC\mpc-hc.exe\" sound")
-    
+    f.write(voice)
+
+    # plays the file with media player classic
+    #os.system ("\"C:\Program Files (x86)\MPC-HC\mpc-hc.exe\" sound")
+    test =" \"C:\mplayerc.exe\" sound"
+
+    print test
+    os.system (test)
 
 # works
 # FRANCAIS
@@ -55,14 +60,14 @@ titlesoup = mysoup.findAll('title')
 descrsoup = mysoup.findAll('description')
 
 list=[]
-list[:]=range(1,4) #27)
+list[:]=range(2,4) #27)
 
 news = ""
 for i in list:
-    
+
     title = titlesoup[i]
     descr = descrsoup[i]
-    
+
     #convert to unicode
     title = unicode(title)
     descr = unicode(descr)
@@ -72,24 +77,24 @@ for i in list:
     title = title.replace("</title>", "")
     descr = descr.replace("<description>", "")
     descr = descr.replace("</description>", "")
-    
+
     #get rid of the html after the description
     descr = descr.split ('&lt')[0]
-    
-    
+
+
     title= str(title)
     descr = str(descr)
     descr = descr.replace("","")
     title = decode_unicode_references(title)
     descr = decode_unicode_references(descr)
-    
+
     news = news+title+".\n"
     print title+"."
     print descr
     #say_that(title)
     #print ""
-       
-print news
+
+print "NEWS: "+news
 say_that(news)
 
 
