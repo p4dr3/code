@@ -39,8 +39,8 @@ def text_to_voice(text, voice):
     website = "http://www.ivona.com"
     script = "voicetest.php"
     #header mimicing firfox
-    my_header = {"User-Agent":
-       "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:26.0) Gecko/20100101 Firefox/26.0"}
+    #my_header = {"User-Agent":
+    #   "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:26.0) Gecko/20100101 Firefox/26.0"}
 
     # HTTP REQUESTS
     # Setup a session to keep cookies
@@ -57,7 +57,7 @@ def text_to_voice(text, voice):
 
     # Formating and sending http GET request - 2nd request
     my_url = website+"/"+script
-    parameters = "rtr=1&t2r="+text+"&v2r="+voice_id+"&lang=en&"+session_id
+    parameters = "rtr=1&t2r="+text+"&v2r="+voice_id+"&lang=us&"+session_id
     myreq = requests.Request(method='GET', url = my_url, params = parameters , cookies = session.cookies )#, stream=True) #, allow_redirect =True
     req = myreq.prepare()
     response2 = session.send(req)
@@ -75,17 +75,18 @@ def text_to_voice(text, voice):
 
 # Converts a text to played sound
 def say_that(text,speaker):
-    
+
+    #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     # DEAL WITH TEXT LENGHT HERE
     #if len(text) > 250
     #    lst = str.split(text,'.')
-        
-    
+    #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
     # Speaker
     #en_us_salli | fr_mathieu | fr_celine| fr_ca_chantal
     #ru_tatyana
     voice = text_to_voice(text, speaker);
-    
+
 
     # save voice to a file
     f = open('sound', 'wb') # important to use b we want to write as binary
@@ -95,21 +96,21 @@ def say_that(text,speaker):
 
     # plays the file with media player classic
     Popen("C:\mplayerc.exe sound",shell=False,stdin=None, stdout=None, stderr=None, close_fds=True)
-   
+
     # wait a bit to let audio play entirely, speed depends on speaker
     if speaker == "en_us_salli":
-        wait_time = ((len(text))/15) 
+        wait_time = ((len(text))/15)
     if speaker == "fr_celine":
-        wait_time = ((len(text))/20)    
+        wait_time = ((len(text))/20)
     if speaker == "fr_mathieu":
-        wait_time = ((len(text))/18)  
+        wait_time = ((len(text))/18)
     else:
-        wait_time = ((len(text))/15)  
-    
+        wait_time = ((len(text))/15)
+
     # for really short sentences
     if wait_time <2:
         wait_time=2
-   
+
     print "WAIT: "+str(wait_time)
     sleep(wait_time)
-    
+
