@@ -8,7 +8,7 @@ from subprocess import Popen
 # http://base64encode.net/ and replace "=" by "."
 def encode_it(data):
     data=base64.b64encode(data)
-    data=data.replace("=",".")
+    #data=data.replace("=",".")
     return data
 
 # Parses a webpage to extract the session_id
@@ -19,6 +19,7 @@ def get_session_id(website):
             line = line.split("&",10)
             line = line[4].split("\"",2)
             session_id = line[0]
+            session_id = session_id.split("=")
             #print "Session _id: "+session_id
             return session_id
 
@@ -27,22 +28,19 @@ def text_to_voice(text, voice):
 
     # Prep the text
     text=text.encode('utf-8')
-    print text
-    print ""
     text= encode_it(text)
 
     # Prep the voice id  --- CAN ADD MORE
     voice_id = encode_it(voice)
 
-
     # Site specific stuff
     website = "http://www.ivona.com"
     script = "voicetest.php"
+    
+    # HTTP REQUESTS
     #header mimicing firfox
     #my_header = {"User-Agent":
     #   "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:26.0) Gecko/20100101 Firefox/26.0"}
-
-    # HTTP REQUESTS
     # Setup a session to keep cookies
     session = requests.Session()
     #print "SESSION"
@@ -57,12 +55,12 @@ def text_to_voice(text, voice):
 
     # Formating and sending http GET request - 2nd request
     my_url = website+"/"+script
-    parameters = "rtr=1&t2r="+text+"&v2r="+voice_id+"&lang=us&"+session_id
+    parameters = {'rtr': '1', 't2r': text, 'v2r':voice_id, 'lang': 'us', session_id[0]: session_id[1]}
     myreq = requests.Request(method='GET', url = my_url, params = parameters , cookies = session.cookies )#, stream=True) #, allow_redirect =True
     req = myreq.prepare()
     response2 = session.send(req)
 
-    #Making sure we got what we wanted
+    # Making sure we got what we wanted
     #print "REQ2 - URL"
     #print response2.url
     #print "REQ2 - HEADERS"
@@ -70,8 +68,11 @@ def text_to_voice(text, voice):
     my_voice = response2.content #that's my translated text in MPEG
     #print "REQ2 - HISTORY"
     #print response2.history
-
-    return my_voice
+    
+    # Write to file
+    f = open('sound', 'wb') # important to use b we want to write as binary
+    f.write(my_voice)
+    f.close
 
 # Converts a text to played sound
 def say_that(text,speaker):
@@ -84,33 +85,30 @@ def say_that(text,speaker):
 
     # Speaker
     #en_us_salli | fr_mathieu | fr_celine| fr_ca_chantal
-    #ru_tatyana
-    voice = text_to_voice(text, speaker);
-
-
-    # save voice to a file
-    f = open('sound', 'wb') # important to use b we want to write as binary
-    #print f
-    f.write(voice)
-    f.close
-
+    text_to_voice(text, speaker);
+    print text
+    
     # plays the file with media player classic
-    Popen("C:\mplayerc.exe sound",shell=False,stdin=None, stdout=None, stderr=None, close_fds=True)
+    Popen("C:\mplayerc.exe sound", shell=False, stdin=None, stdout=None, stderr=None, close_fds=True)
 
     # wait a bit to let audio play entirely, speed depends on speaker
-    if speaker == "en_us_salli":
-        wait_time = ((len(text))/15)
+    words= len(text.split())
+     
+    if speaker == 'en_us_salli':
+        wait_time = (words/2 +((len(text))/15))/2
+        #wait_time = (((len(text))/13)+0.5)
     if speaker == "fr_celine":
-        wait_time = ((len(text))/20)
+        wait_time = (((len(text))/20)+0.5)
     if speaker == "fr_mathieu":
-        wait_time = ((len(text))/18)
-    else:
-        wait_time = ((len(text))/15)
+        wait_time = (((len(text))/18)+0.5)
+    #else:
+        #wait_time = (((len(text))/15)+0.5)
 
     # for really short sentences
     if wait_time <2:
         wait_time=2
 
     print "WAIT: "+str(wait_time)
+    print ""
     sleep(wait_time)
 
