@@ -5,21 +5,20 @@ import StringIO
 from time import sleep
 from subprocess import Popen
 
-# http://base64encode.net/ and replace "=" by "."
+# http://base64encode.net/
 def encode_it(data):
     data=base64.b64encode(data)
-    #data=data.replace("=",".")
     return data
 
 # Parses a webpage to extract the session_id
 def get_session_id(website):
     buf = StringIO.StringIO(website)
     for line in buf:
-        if line.find("voicetest.php?rtr")!= -1:
+        if line.find('voicetest.php?rtr')!= -1:
             line = line.split("&",10)
             line = line[4].split("\"",2)
             session_id = line[0]
-            session_id = session_id.split("=")
+            session_id = session_id.split('=')
             #print "Session _id: "+session_id
             return session_id
 
@@ -36,7 +35,7 @@ def text_to_voice(text, voice):
     # Site specific stuff
     website = "http://www.ivona.com"
     script = "voicetest.php"
-    
+
     # HTTP REQUESTS
     #header mimicing firfox
     #my_header = {"User-Agent":
@@ -68,7 +67,7 @@ def text_to_voice(text, voice):
     my_voice = response2.content #that's my translated text in MPEG
     #print "REQ2 - HISTORY"
     #print response2.history
-    
+
     # Write to file
     f = open('sound', 'wb') # important to use b we want to write as binary
     f.write(my_voice)
@@ -83,26 +82,23 @@ def say_that(text,speaker):
     #    lst = str.split(text,'.')
     #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    # Speaker
-    #en_us_salli | fr_mathieu | fr_celine| fr_ca_chantal
     text_to_voice(text, speaker);
     print text
-    
+
     # plays the file with media player classic
     Popen("C:\mplayerc.exe sound", shell=False, stdin=None, stdout=None, stderr=None, close_fds=True)
 
     # wait a bit to let audio play entirely, speed depends on speaker
     words= len(text.split())
-     
+    print "WORDS/2 ",words/2
+    print "TXT LEN/NUM",(len(text))/20
+
     if speaker == 'en_us_salli':
-        wait_time = (words/2 +((len(text))/15))/2
-        #wait_time = (((len(text))/13)+0.5)
-    if speaker == "fr_celine":
-        wait_time = (((len(text))/20)+0.5)
-    if speaker == "fr_mathieu":
-        wait_time = (((len(text))/18)+0.5)
-    #else:
-        #wait_time = (((len(text))/15)+0.5)
+        wait_time = ((words/2 +((len(text))/20))/2)+0.5
+    if speaker == 'fr_celine':
+        wait_time = (((words-2)/2 +((len(text))/20))/2)
+    if speaker == 'fr_mathieu':
+        wait_time = ((words/2 +((len(text))/20))/2)-0.5
 
     # for really short sentences
     if wait_time <2:
