@@ -15,14 +15,14 @@ rss_link2 = "http://rss.canada.com/get/?F299"
 #rss_link = "http://feeds.gawker.com/lifehacker/full"
 
 # Greetings
-say_that("Greetings "+user+". ", 'en_us_salli') #cut before end
+say_that("Greetings "+user+". ", 'en_us_salli',1) #cut before end
 
 # Template for Weather
 #
 #     Today
 #
 weather = read_weather(0)
-say_that(weather,'en_us_salli')
+say_that(weather,'en_us_salli',0)
 #
 #     Tomorrow
 #
@@ -33,18 +33,18 @@ say_that(weather,'en_us_salli')
 #
 #     FRENCH
 #
-say_that("Voici les nouvelles de la presse.", 'fr_mathieu')
-news=read_rss(rss_link1)
-for item in news:
-    say_that(item,'fr_mathieu')
+#say_that("Voici les nouvelles de la presse.", 'fr_mathieu')
+#news=read_rss(rss_link1)
+#for item in news:
+#    say_that(item,'fr_mathieu')
 #
 #     ENGLISH
 #
-say_that("And now the news from the Gazette.", 'en_us_salli')
+say_that("And now the news from the Gazette.", 'en_us_salli',0)
 news=read_rss(rss_link2)
 for item in news:
-    say_that(item,'en_us_salli')
+    say_that(item,'en_us_salli',0)
 
 # Sign off
-say_that("That's all for now. Have a great day.", 'en_us_salli')
+#say_that("That's all for now. Have a great day.", 'en_us_salli')
 

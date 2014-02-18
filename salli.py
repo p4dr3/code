@@ -4,6 +4,7 @@ import requests
 import StringIO
 from time import sleep
 from subprocess import Popen
+import subprocess
 
 # http://base64encode.net/
 def encode_it(data):
@@ -26,6 +27,7 @@ def get_session_id(website):
 def text_to_voice(text, voice):
 
     # Prep the text
+    print text
     text=text.encode('utf-8')
     text= encode_it(text)
 
@@ -67,44 +69,31 @@ def text_to_voice(text, voice):
     my_voice = response2.content #that's my translated text in MPEG
     #print "REQ2 - HISTORY"
     #print response2.history
+    return my_voice
 
+# Converts a text to played sound
+def say_that(text,speaker,init):
+    
+    if init == 1:
+        subprocess.Popen("C:\mplayerc.exe /play sound", shell=False, stdin=None, stdout=None, stderr=None, close_fds=False)
+    
+    # DEAL WITH TEXT LENGHT HERE
+    #if len(text) > 250:
+    #    print "toto"
+    #else:
+    #    print text
+    my_voice = text_to_voice(text, speaker)
+    
     # Write to file
     f = open('sound', 'wb') # important to use b we want to write as binary
     f.write(my_voice)
     f.close
+    
+    # Spawn MediaPlayer
+    p = subprocess.Popen("C:\mplayerc.exe /add sound", shell=False, stdin=None, stdout=None, stderr=None, close_fds=False)
+    p.communicate()
+    
+    
 
-# Converts a text to played sound
-def say_that(text,speaker):
-
-    #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    # DEAL WITH TEXT LENGHT HERE
-    #if len(text) > 250
-    #    lst = str.split(text,'.')
-    #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    text_to_voice(text, speaker);
-    print text
-
-    # plays the file with media player classic
-    Popen("C:\mplayerc.exe sound", shell=False, stdin=None, stdout=None, stderr=None, close_fds=True)
-
-    # wait a bit to let audio play entirely, speed depends on speaker
-    words= len(text.split())
-    print "WORDS/2 ",words/2
-    print "TXT LEN/NUM",(len(text))/20
-
-    if speaker == 'en_us_salli':
-        wait_time = ((words/2 +((len(text))/20))/2)+0.5
-    if speaker == 'fr_celine':
-        wait_time = (((words-2)/2 +((len(text))/20))/2)
-    if speaker == 'fr_mathieu':
-        wait_time = ((words/2 +((len(text))/20))/2)-0.5
-
-    # for really short sentences
-    if wait_time <2:
-        wait_time=2
-
-    print "WAIT: "+str(wait_time)
-    print ""
-    sleep(wait_time)
+    #sleep(wait_time)
 
