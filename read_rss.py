@@ -4,17 +4,20 @@ from urllib import urlopen
 from bs4 import BeautifulSoup
 
 def _callback(matches):
-    id = matches.group(1)
+    my_id = matches.group(1)
     try:
-        return unichr(int(id))
+        return unichr(int(my_id))
     except:
-        return id
+        return my_id
 
 def decode_unicode_references(data):
     return re.sub("&#(\d+)(;|(?=\s))", _callback, data)
     #return re.sub("&amp;#(\d+)(;|(?=\s))", _callback, data)
 
+
+#--------------------------------------------------------------------------#
 # Reads a rss link, parses it and returns an array of news title/articles
+#--------------------------------------------------------------------------#
 def read_rss(rss_link):
     #read webpage and stores it
     webpage = urlopen(rss_link).read()
@@ -26,11 +29,11 @@ def read_rss(rss_link):
     titlesoup = mysoup.findAll('title')
     descrsoup = mysoup.findAll('description')
 
-    list=[]
-    list[:]=range(2,4) #27)
+    my_list=[]
+    my_list[:]=range(2,3) #27)
 
     news=[]
-    for i in list:
+    for i in my_list:
 
         title = titlesoup[i]
         title = title.findAll(text=True)[0]

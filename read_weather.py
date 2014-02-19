@@ -17,6 +17,9 @@ def full_month(date):
     date = date.replace('Dec','December')
     return(date)
 
+#--------------------------------------------------------------------------#
+# Parse forecast info from weatherpark.com and returns a string
+#--------------------------------------------------------------------------#
 def read_weather(day):
 
     webpage = urlopen("http://weatherspark.com/forecasts/yr/Canada/QC/Montreal").read()
@@ -47,10 +50,11 @@ def read_weather(day):
     unit_temp = forecast_item_soup.findAll('span', attrs={'class' : 'unit temperature'})
     # temp max
     temp_max = unit_temp[0]
-    temp_max = re.search(r"(.\d+\.\d+)", str(temp_max))
+    #temp_max = re.search(r"(.\d+\.\d+)", str(temp_max))
+    temp_max = re.search(r"(\d+\.\d+)", str(temp_max))
     temp_max = int(round(float(temp_max.group(1))))
     weather="Weather forecast for "+date+". Weather is going to be "+forecast+". Temperature is going to be around "+str(temp_max)+"."
-    
+
     # temp min
     temp_min="stupid_placeholder"
     if (len(unit_temp))==2:

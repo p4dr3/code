@@ -2,8 +2,6 @@
 import base64
 import requests
 import StringIO
-from time import sleep
-from subprocess import Popen
 import subprocess
 
 # http://base64encode.net/
@@ -11,7 +9,25 @@ def encode_it(data):
     data=base64.b64encode(data)
     return data
 
+#-------------------------------------------------------#
+# Split a string into an array of short sentences each shorter than value
+#-------------------------------------------------------#
+def modulo_text(text, mod_value, separator):
+    result=[]
+    word_lst = text.split(separator)
+    num_word=len(word_lst)
+    i=0
+    while i != num_word:
+        part_text = word_lst[i]
+        while ((i<=num_word-1) and (len(part_text+separator+word_lst[i])<mod_value)):
+            part_text =part_text+separator+word_lst[i]
+            i=i+1
+        result.append(part_text)
+    return result
+
+#-------------------------------------------------------#
 # Parses a webpage to extract the session_id
+#-------------------------------------------------------#
 def get_session_id(website):
     buf = StringIO.StringIO(website)
     for line in buf:
@@ -23,7 +39,9 @@ def get_session_id(website):
             #print "Session _id: "+session_id
             return session_id
 
+#-------------------------------------------------------#
 # Converts a string to a binary stream of mpeg voice
+#-------------------------------------------------------#
 def text_to_voice(text, voice):
 
     # Prep the text
@@ -71,29 +89,30 @@ def text_to_voice(text, voice):
     #print response2.history
     return my_voice
 
-# Converts a text to played sound
-def say_that(text,speaker,init):
-    
-    if init == 1:
-        subprocess.Popen("C:\mplayerc.exe /play sound", shell=False, stdin=None, stdout=None, stderr=None, close_fds=False)
-    
-    # DEAL WITH TEXT LENGHT HERE
-    #if len(text) > 250:
-    #    print "toto"
-    #else:
-    #    print text
-    my_voice = text_to_voice(text, speaker)
-    
+
+def say(text,voice):
+    # Separator for words is " " but "." gives more fluent sentences.
+    # The downside is you can't have a sentence longer than mod_value(ie 250char)
+    lst_txt = modulo_text(text,250,".")
+    lst_voice =[]
+
+    for t_item in lst_txt:
+        v_item = text_to_voice(t_item,voice)
+        lst_voice.append(v_item)
+
+    voice= ''.join(lst_voice)
+    return voice
+
+#-------------------------------------------------------#
+# create an MPEG file from the binary list and plays it
+#-------------------------------------------------------#
+def play_this(voicelist):
+
     # Write to file
     f = open('sound', 'wb') # important to use b we want to write as binary
-    f.write(my_voice)
+    for item in voicelist:
+        f.write(item)
     f.close
-    
+
     # Spawn MediaPlayer
-    p = subprocess.Popen("C:\mplayerc.exe /add sound", shell=False, stdin=None, stdout=None, stderr=None, close_fds=False)
-    p.communicate()
-    
-    
-
-    #sleep(wait_time)
-
+    subprocess.Popen("C:\mplayerc.exe /play /close sound", shell=False, stdin=None, stdout=None, stderr=None, close_fds=False)

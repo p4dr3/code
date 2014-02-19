@@ -12,6 +12,10 @@
 		<item value="org.eclipse.rcp:4.3.1.v20130911-1000"/>
 		<item value="org.python.pydev.feature:3.3.3.201401272005"/>
 	</list>
+	<section name="ChooseWorkspaceDialogSettings">
+		<item value="361" key="DIALOG_Y_ORIGIN"/>
+		<item value="607" key="DIALOG_X_ORIGIN"/>
+	</section>
 	<section name="NewWizardAction">
 	</section>
 </section>
