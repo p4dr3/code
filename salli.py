@@ -3,6 +3,7 @@ import base64
 import requests
 import StringIO
 import subprocess
+import re
 
 # http://base64encode.net/
 def encode_it(data):
@@ -13,14 +14,27 @@ def encode_it(data):
 # Split a string into an array of short sentences each shorter than value
 #-------------------------------------------------------#
 def modulo_text(text, mod_value, separator):
+
+    # Making sure we can use the "." separator
+    if text.find(separator, 0, mod_value) != -1 :
+        separator=separator
+        corrector=1
+    else: #fallback option to the " " separator
+        print "!!! Warning: Fallback to the \" \" separator !!!"
+        separator=' '
+        corrector=0
+
+    #init
     result=[]
     word_lst = text.split(separator)
     num_word=len(word_lst)
     i=0
-    while i != num_word:
-        part_text = word_lst[i]
-        while ((i<=num_word-1) and (len(part_text+separator+word_lst[i])<mod_value)):
-            part_text =part_text+separator+word_lst[i]
+
+    while (i != (num_word-corrector)): #process all the words
+        part_text =""
+        while ((i<=(num_word-1-corrector)) and (len(part_text+word_lst[i]+separator)<mod_value)):#create the substring
+            #print "PART ",part_text
+            part_text =part_text+word_lst[i]+separator
             i=i+1
         result.append(part_text)
     return result
@@ -89,11 +103,13 @@ def text_to_voice(text, voice):
     #print response2.history
     return my_voice
 
-
+#--------------------------------------------------------------------------#
+# Prepare the text to deal with the text_to_speech limitation of 250 char
+#--------------------------------------------------------------------------#
 def say(text,voice):
-    # Separator for words is " " but "." gives more fluent sentences.
+    # Separator for words is " " but ". " gives more fluent spoken sentences.
     # The downside is you can't have a sentence longer than mod_value(ie 250char)
-    lst_txt = modulo_text(text,250,".")
+    lst_txt = modulo_text(text, 250, '.')
     lst_voice =[]
 
     for t_item in lst_txt:
@@ -107,7 +123,6 @@ def say(text,voice):
 # create an MPEG file from the binary list and plays it
 #-------------------------------------------------------#
 def play_this(voicelist):
-
     # Write to file
     f = open('sound', 'wb') # important to use b we want to write as binary
     for item in voicelist:

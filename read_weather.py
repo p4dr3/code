@@ -46,20 +46,27 @@ def read_weather(day):
     forecast = forecast.replace(']','')
     forecast = " ".join(forecast.split()) #remove extra whitespace
 
+    # Deal with precipitation(s) in the forecast
+    precipitation_inch = re.findall(r"(\d+\.\d+)", str(forecast))
+    for item in precipitation_inch:
+        # Convert to mm with 1 point precision after the decimal
+        precipitation_mm = "%.1f" % (float(item)*25.4)
+        precipitation_mm = str(precipitation_mm)+" millimeters"
+        forecast = forecast.replace(str(item)+"\"",str(precipitation_mm))
+
     # parsing temperatures
     unit_temp = forecast_item_soup.findAll('span', attrs={'class' : 'unit temperature'})
     # temp max
     temp_max = unit_temp[0]
-    #temp_max = re.search(r"(.\d+\.\d+)", str(temp_max))
-    temp_max = re.search(r"(\d+\.\d+)", str(temp_max))
+    temp_max = re.search(r"(-*\d+\.\d+)", str(temp_max))
     temp_max = int(round(float(temp_max.group(1))))
     weather="Weather forecast for "+date+". Weather is going to be "+forecast+". Temperature is going to be around "+str(temp_max)+"."
 
     # temp min
-    temp_min="stupid_placeholder"
+    temp_min=""
     if (len(unit_temp))==2:
         temp_min = unit_temp[1]
-        temp_min = re.search(r"(.\d+\.\d+)", str(temp_min))
+        temp_min = re.search(r"(-*.\d+\.\d+)", str(temp_min))
         temp_min = int(round(float(temp_min.group(1))))
         weather="Weather forecast for "+date+". Weather is going to be "+forecast+". Temperatures are going to be between "+str(temp_min)+" and "+str(temp_max)+"."
 

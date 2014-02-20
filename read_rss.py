@@ -30,7 +30,7 @@ def read_rss(rss_link):
     descrsoup = mysoup.findAll('description')
 
     my_list=[]
-    my_list[:]=range(2,3) #27)
+    my_list[:]=range(2,4) #27)
 
     news=[]
     for i in my_list:
@@ -48,7 +48,21 @@ def read_rss(rss_link):
         descr = descr.split ('<')[0]
 
         title= str(title+".\n")
-        descr = str(descr)
+        descr = str(descr+".\n")
+
+        # making sure we have a single . at the end of the string
+        r = re.compile(r"(\.+)")
+        #print "title/",title
+        r.sub('.', title)
+        #print "title/",title
+
+        #print "descr/",descr
+        r.sub('.', descr)
+        #print "descr/",descr
+
+        #descr = "".join(descr.split('.'))
+
+
 
         title = decode_unicode_references(title)
         descr = decode_unicode_references(descr)
