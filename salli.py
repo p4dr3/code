@@ -3,7 +3,6 @@ import base64
 import requests
 import StringIO
 import subprocess
-import re
 
 # http://base64encode.net/
 def encode_it(data):
@@ -14,29 +13,39 @@ def encode_it(data):
 # Split a string into an array of short sentences each shorter than value
 #-------------------------------------------------------#
 def modulo_text(text, mod_value, separator):
-
-    # Making sure we can use the "." separator
-    if text.find(separator, 0, mod_value) != -1 :
-        separator=separator
-        corrector=1
-    else: #fallback option to the " " separator
-        print "!!! Warning: Fallback to the \" \" separator !!!"
-        separator=' '
-        corrector=0
-
-    #init
-    result=[]
+    print "-->",text
+    # INIT
     word_lst = text.split(separator)
+
+    # Making sure we can use the "." separator, if not fall back to "," or to " "
+    for word in word_lst:
+        if len(word) > mod_value:
+            print "!!! Warning: Fallback to the \",\" separator !!!"
+            separator=","
+            word_lst = text.split(separator)
+
+    for word in word_lst:
+        if len(word) > mod_value:
+            print "!!! Warning: Fallback to the \" \" separator !!!"
+            separator=" "
+            word_lst = text.split(separator)
+
     num_word=len(word_lst)
     i=0
+    result=[]
 
-    while (i != (num_word-corrector)): #process all the words
+    while (i != (num_word)): #process all the words
         part_text =""
-        while ((i<=(num_word-1-corrector)) and (len(part_text+word_lst[i]+separator)<mod_value)):#create the substring
-            #print "PART ",part_text
-            part_text =part_text+word_lst[i]+separator
+        while ( i != (num_word) and len(part_text+word_lst[i]+separator)<=mod_value ):#create the substring i != (num_word) and
+            if (i != num_word-1):
+                part_text =part_text+word_lst[i]+separator
+                #print "PART ",part_text
+            if (i ==num_word-1):
+                part_text =part_text+word_lst[i]
+                #print "LAST",part_text
             i=i+1
         result.append(part_text)
+    #print "RES",result
     return result
 
 #-------------------------------------------------------#
@@ -59,11 +68,11 @@ def get_session_id(website):
 def text_to_voice(text, voice):
 
     # Prep the text
-    print text
+    #print "#TTV: ",text
     text=text.encode('utf-8')
     text= encode_it(text)
 
-    # Prep the voice id  --- CAN ADD MORE
+    # Prep the voice id --- CAN ADD MORE
     voice_id = encode_it(voice)
 
     # Site specific stuff
@@ -73,7 +82,7 @@ def text_to_voice(text, voice):
     # HTTP REQUESTS
     #header mimicing firfox
     #my_header = {"User-Agent":
-    #   "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:26.0) Gecko/20100101 Firefox/26.0"}
+    # "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:26.0) Gecko/20100101 Firefox/26.0"}
     # Setup a session to keep cookies
     session = requests.Session()
     #print "SESSION"
@@ -107,9 +116,9 @@ def text_to_voice(text, voice):
 # Prepare the text to deal with the text_to_speech limitation of 250 char
 #--------------------------------------------------------------------------#
 def say(text,voice):
-    # Separator for words is " " but ". " gives more fluent spoken sentences.
-    # The downside is you can't have a sentence longer than mod_value(ie 250char)
-    lst_txt = modulo_text(text, 250, '.')
+    # Separator for words is " " but ". " gives more fluent spoken sentences and is faster.
+    # however modulo will fall back to "," or " " if the sentences are getting longer than 250 char.
+    lst_txt = modulo_text(text, 250, ". ")
     lst_voice =[]
 
     for t_item in lst_txt:
@@ -131,3 +140,4 @@ def play_this(voicelist):
 
     # Spawn MediaPlayer
     subprocess.Popen("C:\mplayerc.exe /play /close sound", shell=False, stdin=None, stdout=None, stderr=None, close_fds=False)
+

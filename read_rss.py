@@ -18,7 +18,7 @@ def decode_unicode_references(data):
 #--------------------------------------------------------------------------#
 # Reads a rss link, parses it and returns an array of news title/articles
 #--------------------------------------------------------------------------#
-def read_rss(rss_link):
+def read_rss(rss_link, start, end):
     #read webpage and stores it
     webpage = urlopen(rss_link).read()
 
@@ -30,7 +30,7 @@ def read_rss(rss_link):
     descrsoup = mysoup.findAll('description')
 
     my_list=[]
-    my_list[:]=range(2,4) #27)
+    my_list[:]=range(start,end) #27)
 
     news=[]
     for i in my_list:
@@ -47,22 +47,11 @@ def read_rss(rss_link):
         # Get rid of the html after the description
         descr = descr.split ('<')[0]
 
-        title= str(title+".\n")
-        descr = str(descr+".\n")
-
-        # making sure we have a single . at the end of the string
-        r = re.compile(r"(\.+)")
-        #print "title/",title
-        r.sub('.', title)
-        #print "title/",title
-
-        #print "descr/",descr
-        r.sub('.', descr)
-        #print "descr/",descr
-
-        #descr = "".join(descr.split('.'))
-
-
+        # making sure we have a single "." at the end of the string
+        title= str(title+". ")
+        descr = str(descr+". ")
+        title = title.replace('..','.')
+        descr = descr.replace('..','.')
 
         title = decode_unicode_references(title)
         descr = decode_unicode_references(descr)
@@ -74,3 +63,4 @@ def read_rss(rss_link):
 
 #debug stuff:
     #print type(descr)
+

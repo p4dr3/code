@@ -49,7 +49,7 @@ def read_weather(day):
     # Deal with precipitation(s) in the forecast
     precipitation_inch = re.findall(r"(\d+\.\d+)", str(forecast))
     for item in precipitation_inch:
-        # Convert to mm with 1 point precision after the decimal
+        # Convert to mm with precision of 1 decimal
         precipitation_mm = "%.1f" % (float(item)*25.4)
         precipitation_mm = str(precipitation_mm)+" millimeters"
         forecast = forecast.replace(str(item)+"\"",str(precipitation_mm))
@@ -71,4 +71,3 @@ def read_weather(day):
         weather="Weather forecast for "+date+". Weather is going to be "+forecast+". Temperatures are going to be between "+str(temp_min)+" and "+str(temp_max)+"."
 
     return weather
-
